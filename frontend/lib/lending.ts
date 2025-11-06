@@ -13,6 +13,7 @@ export type LoanEntry = {
   endTime: bigint;
   amountHandle: Hex;
   interestHandle: Hex;
+  collateralHandle: Hex;
 };
 
 const STATUS_MAP: Record<number, LoanStatus> = {
@@ -67,14 +68,15 @@ export async function fetchLoans(publicClient: PublicClient, address: Address): 
         functionName: "getLoan",
         args: [id],
       })) as [
-        Address,
-        Hex,
-        Hex,
-        number,
-        string,
-        number,
-        bigint,
-        bigint
+        Address,  // borrower
+        Hex,      // amount handle
+        Hex,      // interestRate handle
+        number,   // duration
+        string,   // collateralType
+        Hex,      // collateralAmount handle
+        number,   // status
+        bigint,   // startTime
+        bigint    // endTime
       ];
 
       return {
@@ -84,9 +86,10 @@ export async function fetchLoans(publicClient: PublicClient, address: Address): 
         interestHandle: loan[2],
         duration: loan[3],
         collateralType: loan[4],
-        status: resolveLoanStatus(loan[5]),
-        startTime: loan[6],
-        endTime: loan[7],
+        collateralHandle: loan[5],
+        status: resolveLoanStatus(loan[6]),
+        startTime: loan[7],
+        endTime: loan[8],
       } satisfies LoanEntry;
     })
   );

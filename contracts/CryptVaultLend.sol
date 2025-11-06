@@ -165,6 +165,7 @@ contract CryptVaultLend is SepoliaConfig {
         euint32 interestRate,
         uint32 duration,
         string memory collateralType,
+        euint32 collateralAmount,
         LoanStatus status,
         uint256 startTime,
         uint256 endTime
@@ -177,6 +178,7 @@ contract CryptVaultLend is SepoliaConfig {
             loan.interestRate,
             loan.duration,
             loan.collateralType,
+            loan.collateralAmount,
             loan.status,
             loan.startTime,
             loan.endTime
