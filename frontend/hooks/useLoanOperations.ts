@@ -133,20 +133,35 @@ export function useLoanOperations({
           collateralEnc,
           amountEncProofType: typeof amountEnc.inputProof,
           amountEncProofValue: amountEnc.inputProof,
+          amountHandle: amountEnc.handles[0],
+          amountHandleType: typeof amountEnc.handles[0],
         });
+
+        // Ensure handles are properly formatted as hex strings with 0x prefix
+        const formatHandle = (handle: any): `0x${string}` => {
+          console.log("formatHandle input:", handle, "type:", typeof handle);
+          if (typeof handle === "string") {
+            return handle.startsWith("0x") ? handle as `0x${string}` : `0x${handle}` as `0x${string}`;
+          }
+          if (handle instanceof Uint8Array) {
+            return bytesToHex(handle) as `0x${string}`;
+          }
+          // Fallback - try to convert to string
+          return `0x${handle.toString()}` as `0x${string}`;
+        };
 
         const hash = await writeContractAsync({
           address: contractAddress,
           abi: LENDING_POOL_ABI,
           functionName: "createLoan",
           args: [
-            amountEnc.handles[0],
+            formatHandle(amountEnc.handles[0]),
             normalizeProof(amountEnc.inputProof),
-            rateEnc.handles[0],
+            formatHandle(rateEnc.handles[0]),
             normalizeProof(rateEnc.inputProof),
             values.duration,
             values.collateralType,
-            collateralEnc.handles[0],
+            formatHandle(collateralEnc.handles[0]),
             normalizeProof(collateralEnc.inputProof),
           ],
         });
