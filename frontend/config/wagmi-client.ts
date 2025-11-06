@@ -1,8 +1,9 @@
 'use client';
 
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { http, createConfig, type Config } from 'wagmi';
 import { hardhat, sepolia } from 'wagmi/chains';
-import { cookieStorage, createStorage, type Config } from 'wagmi';
+import { injected } from 'wagmi/connectors';
+import { cookieStorage, createStorage } from 'wagmi';
 
 // Define localhost chain
 const localhost = {
@@ -15,31 +16,24 @@ const localhost = {
   testnet: true,
 } as const;
 
-const PLACEHOLDER_IDS = new Set([
-  'demo_project_id_replace_with_your_own',
-  'YOUR_PROJECT_ID_HERE',
-]);
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
-
-export const isWalletConnectReady = Boolean(projectId && !PLACEHOLDER_IDS.has(projectId));
-
 let cachedConfig: Config | null = null;
 
 export function createWagmiConfig() {
-  if (!isWalletConnectReady || !projectId) {
-    throw new Error(
-      'WalletConnect project ID missing. Please set NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID in your environment.'
-    );
-  }
-
   if (cachedConfig) {
     return cachedConfig;
   }
 
-  cachedConfig = getDefaultConfig({
-    appName: 'CryptVault Lending Pool',
-    projectId,
+  cachedConfig = createConfig({
     chains: [localhost, sepolia],
+    connectors: [
+      injected({
+        target: 'metaMask',
+      }),
+    ],
+    transports: {
+      [localhost.id]: http(),
+      [sepolia.id]: http(),
+    },
     ssr: true,
     storage: createStorage({
       storage: typeof window !== 'undefined' ? window.localStorage : cookieStorage,

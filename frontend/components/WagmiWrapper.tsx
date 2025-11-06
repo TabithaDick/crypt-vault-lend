@@ -33,12 +33,6 @@ export function WagmiWrapper({ children }: WagmiWrapperProps) {
     // Only load config on client side
     import('../config/wagmi-client')
       .then((module) => {
-        if (!module.isWalletConnectReady) {
-          setErrorMessage(
-            'WalletConnect project ID missing. Set NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID in your .env.local before running the app.'
-          );
-          return;
-        }
         const cfg = module.createWagmiConfig();
         setConfig(cfg);
       })
@@ -62,10 +56,10 @@ export function WagmiWrapper({ children }: WagmiWrapperProps) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="max-w-md rounded-xl border border-border bg-card p-6 text-center space-y-3">
-          <p className="text-lg font-semibold text-foreground">Wallet configuration required</p>
+          <p className="text-lg font-semibold text-foreground">Wallet configuration error</p>
           <p className="text-sm text-muted-foreground">{errorMessage}</p>
           <div className="text-xs text-secondary">
-            You can obtain a WalletConnect Project ID at cloud.walletconnect.com and add it to your environment file.
+            Please ensure MetaMask or another injected wallet is installed and try refreshing the page.
           </div>
         </div>
       </div>

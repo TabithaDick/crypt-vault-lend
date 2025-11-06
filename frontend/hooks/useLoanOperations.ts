@@ -60,8 +60,30 @@ export function useLoanOperations({
     [publicClient, onSettled]
   );
 
-  const normalizeProof = useCallback((proof: Uint8Array | string) => {
-    return typeof proof === "string" ? proof : bytesToHex(proof);
+  const normalizeProof = useCallback((proof: Uint8Array | string | any) => {
+    // Debug logging
+    console.log("normalizeProof input type:", typeof proof, "value:", proof);
+    
+    if (typeof proof === "string") {
+      // Ensure it has 0x prefix
+      return proof.startsWith("0x") ? proof : `0x${proof}`;
+    }
+    
+    if (proof instanceof Uint8Array || Array.isArray(proof)) {
+      // Convert to hex with 0x prefix
+      const hex = bytesToHex(new Uint8Array(proof));
+      console.log("normalizeProof converted to hex:", hex);
+      return hex;
+    }
+    
+    // Fallback: try to handle as object with bytes property
+    if (proof && typeof proof === "object" && "bytes" in proof) {
+      const hex = bytesToHex(new Uint8Array(proof.bytes));
+      console.log("normalizeProof converted from object.bytes:", hex);
+      return hex;
+    }
+    
+    throw new Error(`Unsupported proof type: ${typeof proof}`);
   }, []);
 
   const encryptValue = useCallback(
@@ -103,6 +125,15 @@ export function useLoanOperations({
         const amountEnc = await encryptValue(values.amount);
         const rateEnc = await encryptValue(Math.round(values.interestRate * 100));
         const collateralEnc = await encryptValue(values.collateralAmount);
+        
+        // Debug logging
+        console.log("Encrypted values structure:", {
+          amountEnc,
+          rateEnc,
+          collateralEnc,
+          amountEncProofType: typeof amountEnc.inputProof,
+          amountEncProofValue: amountEnc.inputProof,
+        });
 
         const hash = await writeContractAsync({
           address: contractAddress,
