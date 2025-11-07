@@ -21,7 +21,6 @@ interface LoanCardProps {
 
 // Internal component that uses wagmi hooks
 const LoanCardWithWagmi = ({
-  id,
   amount,
   encryptedAmount,
   interestRate,
@@ -70,7 +69,7 @@ const LoanCardWithWagmi = ({
       toast.success("Transaction Submitted", {
         description: `Depositing ${amount}. Please confirm in your wallet.`,
       });
-    } catch (error) {
+    } catch {
       toast.error("Transaction Failed", {
         description: "Failed to submit deposit transaction. Please try again.",
       });

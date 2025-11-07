@@ -90,9 +90,6 @@ export default function Home() {
     return undefined;
   }, [isConnected, contractAddress, fheStatus, fheError]);
 
-  const shortAddress = (value: string) =>
-    `${value.slice(0, 6)}…${value.slice(-4)}`;
-
   const handleRepayLoan = async (loan: LoanEntry) => {
     try {
       const hash = await repayLoan(loan.id);
