@@ -51,13 +51,19 @@ const LoanCardWithWagmi = ({
       return;
     }
     
+    const contractAddress = getLendingPoolAddress(chainId);
+    if (!contractAddress) {
+      toast.error("Unsupported Network", {
+        description: "Please switch to Sepolia or Localhost.",
+      });
+      return;
+    }
+    
     try {
       setIsProcessing(true);
       // TODO: Implement FHE encryption for deposit amount
       const mockEncryptedInput = "0x0000000000000000000000000000000000000000000000000000000000000000";
       const mockProof = "0x";
-      
-      const contractAddress = getLendingPoolAddress(chainId);
       
       writeContract({
         address: contractAddress,

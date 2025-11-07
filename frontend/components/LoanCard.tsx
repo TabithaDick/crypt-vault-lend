@@ -51,6 +51,14 @@ export const LoanCard = ({
       return;
     }
     
+    const contractAddress = getLendingPoolAddress(chainId);
+    if (!contractAddress) {
+      toast.error("Unsupported Network", {
+        description: "Please switch to Sepolia or Localhost.",
+      });
+      return;
+    }
+    
     try {
       setIsProcessing(true);
       
@@ -58,8 +66,6 @@ export const LoanCard = ({
       // For now, using mock encrypted input
       const mockEncryptedInput = "0x0000000000000000000000000000000000000000000000000000000000000000";
       const mockProof = "0x";
-      
-      const contractAddress = getLendingPoolAddress(chainId);
       
       writeContract({
         address: contractAddress,
