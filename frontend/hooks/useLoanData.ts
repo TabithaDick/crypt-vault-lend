@@ -42,7 +42,15 @@ export function useLoanData({
   });
 
   useEffect(() => {
+    console.log("[useLoanData] Effect triggered:", { 
+      hasPublicClient: !!publicClient, 
+      contractAddress, 
+      refreshKey,
+      account 
+    });
+
     if (!publicClient || !contractAddress) {
+      console.log("[useLoanData] Missing publicClient or contractAddress, skipping fetch");
       setState((prev) => ({
         ...prev,
         stats: undefined,
@@ -60,10 +68,13 @@ export function useLoanData({
 
     (async () => {
       try {
+        console.log("[useLoanData] Fetching stats and loans...");
         const [stats, loans] = await Promise.all([
           fetchPoolStats(publicClient, contractAddress),
           fetchLoans(publicClient, contractAddress),
         ]);
+
+        console.log("[useLoanData] Fetched:", { stats, loansCount: loans.length, loans });
 
         if (cancelled) return;
 
@@ -75,6 +86,7 @@ export function useLoanData({
           isLoading: false,
         });
       } catch (error) {
+        console.error("[useLoanData] Fetch error:", error);
         if (cancelled) return;
         setState((prev) => ({
           ...prev,

@@ -48,13 +48,18 @@ export async function fetchPoolStats(publicClient: PublicClient, address: Addres
 }
 
 export async function fetchLoans(publicClient: PublicClient, address: Address): Promise<LoanEntry[]> {
+  console.log("[fetchLoans] Fetching loans from contract:", address);
+  
   const totalLoans = (await publicClient.readContract({
     address,
     abi: LENDING_POOL_ABI,
     functionName: "getTotalLoans",
   })) as bigint;
 
+  console.log("[fetchLoans] Total loans:", totalLoans.toString());
+
   if (totalLoans === 0n) {
+    console.log("[fetchLoans] No loans found");
     return [];
   }
 
