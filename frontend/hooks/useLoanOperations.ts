@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Address, Hash, PublicClient } from "viem";
 import { bytesToHex } from "viem";
-import { useWriteContract } from "wagmi";
+import { useWriteContract, useAccount } from "wagmi";
 import { FhevmInstance } from "@/fhevm/fhevmTypes";
 import { LENDING_POOL_ABI } from "@/contracts/lendingPool";
 
@@ -40,9 +40,18 @@ export function useLoanOperations({
   onSettled,
 }: UseLoanOperationsParams): LoanOperationsState {
   const { writeContractAsync } = useWriteContract();
+  const { isConnected, connector } = useAccount();
   const [isCreating, setIsCreating] = useState(false);
   const [isFunding, setIsFunding] = useState(false);
   const [isRepaying, setIsRepaying] = useState(false);
+  
+  console.log("[useLoanOperations] Hook state:", {
+    contractAddress,
+    hasInstance: !!instance,
+    account,
+    isConnected,
+    connectorName: connector?.name,
+  });
 
   const supportsFhe = useMemo(
     () => Boolean(contractAddress && instance && account),
@@ -150,28 +159,49 @@ export function useLoanOperations({
           return `0x${handle.toString()}` as `0x${string}`;
         };
 
-        const hash = await writeContractAsync({
+        const args = [
+          formatHandle(amountEnc.handles[0]),
+          normalizeProof(amountEnc.inputProof),
+          formatHandle(rateEnc.handles[0]),
+          normalizeProof(rateEnc.inputProof),
+          values.duration,
+          values.collateralType,
+          formatHandle(collateralEnc.handles[0]),
+          normalizeProof(collateralEnc.inputProof),
+        ];
+        
+        console.log("[createLoan] Calling writeContractAsync with:", {
           address: contractAddress,
-          abi: LENDING_POOL_ABI,
           functionName: "createLoan",
-          args: [
-            formatHandle(amountEnc.handles[0]),
-            normalizeProof(amountEnc.inputProof),
-            formatHandle(rateEnc.handles[0]),
-            normalizeProof(rateEnc.inputProof),
-            values.duration,
-            values.collateralType,
-            formatHandle(collateralEnc.handles[0]),
-            normalizeProof(collateralEnc.inputProof),
-          ],
+          args,
+          isConnected,
+          connectorName: connector?.name,
         });
 
+        if (!isConnected) {
+          throw new Error("Wallet not connected. Please connect your wallet first.");
+        }
+
+        let hash: Hash;
+        try {
+          hash = await writeContractAsync({
+            address: contractAddress,
+            abi: LENDING_POOL_ABI,
+            functionName: "createLoan",
+            args,
+          });
+        } catch (writeError) {
+          console.error("[createLoan] writeContractAsync error:", writeError);
+          throw writeError;
+        }
+
+        console.log("[createLoan] Transaction hash received:", hash);
         return await waitReceipt(hash);
       } finally {
         setIsCreating(false);
       }
     },
-    [contractAddress, supportsFhe, encryptValue, normalizeProof, writeContractAsync, waitReceipt]
+    [contractAddress, supportsFhe, encryptValue, normalizeProof, writeContractAsync, waitReceipt, isConnected, connector]
   );
 
   const fundLoan = useCallback(
