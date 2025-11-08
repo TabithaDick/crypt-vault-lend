@@ -1,7 +1,25 @@
-# FHEVM Hardhat Template
+# CryptVault Lend
 
-A Hardhat-based template for developing Fully Homomorphic Encryption (FHE) enabled Solidity smart contracts using the
-FHEVM protocol by Zama.
+A decentralized lending platform built with Fully Homomorphic Encryption (FHE) using Zama's FHEVM protocol. CryptVault Lend enables private lending and borrowing with encrypted loan amounts, interest rates, and collateral values.
+
+## 🎬 Demo
+
+### 📺 Video Demo
+Watch our comprehensive demo showcasing the CryptVault Lend platform:
+
+**[📹 View Demo Video: crypt-vault-lend.mp4](./crypt-vault-lend.mp4)**
+
+### 🌐 Live Demo
+Experience CryptVault Lend live: **[https://crypt-vault-lend.vercel.app/](https://crypt-vault-lend.vercel.app/)**
+
+## ✨ Features
+
+- **Private Lending**: Create loans with encrypted amounts and interest rates
+- **Secure Borrowing**: Borrow funds with encrypted collateral requirements
+- **FHE-Powered**: All sensitive data encrypted using Zama's FHEVM
+- **Multi-Network**: Supports both Hardhat local network and Sepolia testnet
+- **Modern UI**: Built with Next.js, TypeScript, and Tailwind CSS
+- **Wallet Integration**: Connect with MetaMask and other Web3 wallets
 
 ## Quick Start
 
@@ -65,17 +83,39 @@ For detailed instructions see:
    npx hardhat test --network sepolia
    ```
 
+7. **Run Frontend Development Server**
+
+   ```bash
+   # Navigate to frontend directory
+   cd frontend
+   
+   # Install frontend dependencies
+   npm install
+   
+   # Start development server
+   npm run dev
+   ```
+
+   The frontend will be available at `http://localhost:3000`
+
 ## 📁 Project Structure
 
 ```
-fhevm-hardhat-template/
-├── contracts/           # Smart contract source files
-│   └── FHECounter.sol   # Example FHE counter contract
-├── deploy/              # Deployment scripts
-├── tasks/               # Hardhat custom tasks
-├── test/                # Test files
-├── hardhat.config.ts    # Hardhat configuration
-└── package.json         # Dependencies and scripts
+crypt-vault-lend/
+├── contracts/              # Smart contract source files
+│   ├── CryptVaultLend.sol  # Main lending contract with FHE
+│   └── FHECounter.sol      # Example FHE counter contract
+├── frontend/               # Next.js frontend application
+│   ├── app/               # Next.js app directory
+│   ├── components/        # React components
+│   ├── hooks/             # Custom React hooks
+│   ├── lib/               # Utility libraries
+│   └── config/            # Configuration files
+├── deploy/                 # Deployment scripts
+├── tasks/                  # Hardhat custom tasks
+├── test/                   # Test files
+├── hardhat.config.ts       # Hardhat configuration
+└── package.json            # Dependencies and scripts
 ```
 
 ## 📜 Available Scripts
