@@ -2,6 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Lock, TrendingUp, Calendar, DollarSign } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { useAccount } from 'wagmi';
 
 interface LoanCardProps {
   id: string;
@@ -14,6 +16,7 @@ interface LoanCardProps {
 }
 
 export const LoanCard = ({
+  id,
   amount,
   encryptedAmount,
   interestRate,
@@ -21,10 +24,37 @@ export const LoanCard = ({
   collateral,
   status,
 }: LoanCardProps) => {
+  const { isConnected } = useAccount();
+  
   const statusColors = {
     available: "bg-secondary/20 text-secondary border-secondary/30",
     active: "bg-primary/20 text-primary border-primary/30",
     completed: "bg-muted/20 text-muted-foreground border-muted/30",
+  };
+
+  const handleLend = () => {
+    if (!isConnected) {
+      toast({
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet to lend.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    toast({
+      title: "Processing Loan",
+      description: `Initiating lending for ${amount} at ${interestRate}`,
+    });
+    console.log("Lending to loan:", id);
+  };
+
+  const handleViewDetails = () => {
+    toast({
+      title: "Loan Details",
+      description: `Viewing details for loan ${id}`,
+    });
+    console.log("Viewing loan details:", id);
   };
 
   return (
@@ -84,16 +114,27 @@ export const LoanCard = ({
         <div className="flex gap-2">
           {status === "available" && (
             <>
-              <Button className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+              <Button 
+                onClick={handleLend}
+                className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+              >
                 Lend
               </Button>
-              <Button variant="outline" className="flex-1 border-primary/30 hover:bg-primary/10">
+              <Button 
+                onClick={handleViewDetails}
+                variant="outline" 
+                className="flex-1 border-primary/30 hover:bg-primary/10"
+              >
                 View Details
               </Button>
             </>
           )}
           {status === "active" && (
-            <Button variant="outline" className="w-full border-primary/30 hover:bg-primary/10">
+            <Button 
+              onClick={handleViewDetails}
+              variant="outline" 
+              className="w-full border-primary/30 hover:bg-primary/10"
+            >
               View Active Loan
             </Button>
           )}

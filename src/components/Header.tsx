@@ -1,13 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Wallet } from "lucide-react";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import logo from "@/assets/logo.png";
 
 export const Header = () => {
-  const handleConnectWallet = () => {
-    // Rainbow Wallet connection logic would go here
-    console.log("Connecting to Rainbow Wallet...");
-  };
-
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
@@ -20,13 +14,7 @@ export const Header = () => {
             </div>
           </div>
           
-          <Button 
-            onClick={handleConnectWallet}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold glow-border"
-          >
-            <Wallet className="mr-2 h-4 w-4" />
-            Connect Rainbow Wallet
-          </Button>
+          <ConnectButton />
         </div>
       </div>
     </header>
