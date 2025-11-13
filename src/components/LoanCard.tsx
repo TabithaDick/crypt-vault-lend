@@ -3,7 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Lock, TrendingUp, Calendar, DollarSign } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useAccount } from 'wagmi';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { parseEther } from 'viem';
+import { LOAN_POOL_ADDRESS, LOAN_POOL_ABI } from "@/contracts/loanPool";
+import { useState } from "react";
 
 interface LoanCardProps {
   id: string;
@@ -25,6 +28,12 @@ export const LoanCard = ({
   status,
 }: LoanCardProps) => {
   const { isConnected } = useAccount();
+  const [isLending, setIsLending] = useState(false);
+  
+  const { writeContract, data: hash } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
+    hash,
+  });
   
   const statusColors = {
     available: "bg-secondary/20 text-secondary border-secondary/30",
@@ -32,7 +41,7 @@ export const LoanCard = ({
     completed: "bg-muted/20 text-muted-foreground border-muted/30",
   };
 
-  const handleLend = () => {
+  const handleLend = async () => {
     if (!isConnected) {
       toast({
         title: "Wallet Not Connected",
@@ -42,11 +51,33 @@ export const LoanCard = ({
       return;
     }
     
-    toast({
-      title: "Processing Loan",
-      description: `Initiating lending for ${amount} at ${interestRate}`,
-    });
-    console.log("Lending to loan:", id);
+    try {
+      setIsLending(true);
+      
+      // Parse the amount from string (e.g., "1,000 ETH" -> "1000")
+      const amountValue = amount.replace(/[^0-9.]/g, '');
+      
+      writeContract({
+        address: LOAN_POOL_ADDRESS,
+        abi: LOAN_POOL_ABI,
+        functionName: 'lend',
+        args: [id, parseEther(amountValue)],
+        value: parseEther(amountValue),
+      } as any);
+      
+      toast({
+        title: "Transaction Submitted",
+        description: `Lending ${amount} at ${interestRate}. Please confirm in your wallet.`,
+      });
+    } catch (error) {
+      console.error("Lending error:", error);
+      toast({
+        title: "Transaction Failed",
+        description: "Failed to submit lending transaction. Please try again.",
+        variant: "destructive",
+      });
+      setIsLending(false);
+    }
   };
 
   const handleViewDetails = () => {
@@ -117,8 +148,9 @@ export const LoanCard = ({
               <Button 
                 onClick={handleLend}
                 className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                disabled={isLending || isConfirming}
               >
-                Lend
+                {isLending || isConfirming ? "Processing..." : "Lend"}
               </Button>
               <Button 
                 onClick={handleViewDetails}
