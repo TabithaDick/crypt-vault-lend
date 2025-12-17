@@ -3,8 +3,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Encrypted Lending Pool",
-  description: "Decentralized encrypted lending powered by FHE",
+  title: "CryptVault Lend | Private DeFi Lending",
+  description: "Decentralized encrypted lending powered by Fully Homomorphic Encryption (FHE)",
   icons: {
     icon: "/favicon.svg",
   },
@@ -17,7 +17,22 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className="antialiased min-h-screen">
+        {/* Animated Background */}
+        <div className="animated-bg" />
+        <div className="grid-pattern" />
+        <div className="particles">
+          <div className="particle" />
+          <div className="particle" />
+          <div className="particle" />
+          <div className="particle" />
+          <div className="particle" />
+          <div className="particle" />
+          <div className="particle" />
+          <div className="particle" />
+          <div className="particle" />
+        </div>
+        
         <Providers>{children}</Providers>
       </body>
     </html>

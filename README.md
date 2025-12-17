@@ -10,7 +10,7 @@ Watch our comprehensive demo showcasing the CryptVault Lend platform:
 **[📹 View Demo Video: crypt-vault-lend.mp4](./crypt-vault-lend.mp4)**
 
 ### 🌐 Live Demo
-Experience CryptVault Lend live: **[https://crypt-vault-lend.vercel.app/](https://crypt-vault-lend.vercel.app/)**
+Experience CryptVault Lend live: **[https://crypt-vault-lend.vercel.app/](https://crypt-vault-lend-rho.vercel.app/)**
 
 ## ✨ Features
 

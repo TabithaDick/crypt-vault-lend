@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@fhevm/hardhat-plugin": "^0.1.0",
+    "@fhevm/mock-utils": "^0.1.0",
     "@nomicfoundation/hardhat-chai-matchers": "^2.1.0",
     "@nomicfoundation/hardhat-ethers": "^3.1.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.1.0",
@@ -98,6 +99,7 @@
     "axios@>=1.0.0 <1.8.2": ">=1.8.2",
     "axios@<0.29.1": ">=0.29.1",
     "cookie@<0.7.0": ">=0.7.0",
-    "minimatch": "^3.1.2"
+    "minimatch": "^3.1.2",
+    "zksync-web3": "npm:empty-npm-package@1.0.0"
   }
 }
